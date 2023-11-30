@@ -1,0 +1,406 @@
+body {
+    background-color: #fffbf9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    color: #313131;
+}
+
+.container {
+    width: 100%;
+    max-width: 375px;
+    background-color: rgb(245, 245, 245);
+    margin: 0px 30px;
+}
+
+@media (max-width: 430px) {
+    .container {
+        width: 100%;
+        max-width: none;
+    }
+}
+
+.heder {
+display: flex;
+background-color:#ffffff;
+}
+
+.icon img {
+    width: 30px;
+    padding: 10px 10px;
+}
+
+.icon {
+margin-left: 75px;
+}
+
+.logo img {
+    width: 200px;
+}
+
+.logo2 img {
+    width: 130px;
+    margin: 15px 0px 0px 10px;
+}
+
+.logo {
+        display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 50px;
+}
+
+/* 入力フォームのスタイリング */
+input[type="text"] {
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #e1e8ed;
+    border-radius: 20px;
+    width: 100%;
+}
+
+.send  {
+    background-color: #F6BC9A;
+        color: rgb(255, 255, 255);
+        width: 30%;
+        font-size: 15px;
+        margin: 10px;
+        border: none;
+}
+
+
+.send:hover{
+    background-color: #f6bc9a77;;
+}
+/* ボタンのスタイリング */
+button {
+    padding: 5px 20px;
+        border: 1px solid #b4b4b4;
+background-color: #f9f9f9;
+    color: #313131;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+
+button:hover {
+background-color: rgb(238, 238, 238);
+}
+
+
+.nyuuryoku {
+    display: flex;
+        justify-content: center;
+        align-items: center;
+    flex-direction: column;
+width: 80%;
+}
+
+.search_text {
+    display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 80%;
+}
+
+.search_text_group {
+
+display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+ }
+
+
+.nyuuryoku_group {
+        display: flex;
+            justify-content: center;
+            align-items: center;
+}
+
+/*名前時間*/
+ .message-item {
+    margin-bottom: 20px;
+    list-style: none;
+    /* border: solid 1px #9e9e9e; */
+    background-color: #f9f9f9;
+    padding: 10px 20px 10px 20px;
+    
+} 
+
+.stamp {
+    text-align: center;
+    display: flex;
+    margin-bottom: 10px;
+}
+
+
+
+.message-header {
+    font-weight: bold;color: #313131;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    font-size: small;
+    text-align: center;
+}
+
+.message-text {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+
+
+.favorite-button.favorited {
+    background-color:#F6BC9A;
+    color: #ffffff;
+}
+.favorite-button.favorited:hover {
+    background-color: #e4e4e4;
+    color: #ffffff;
+}
+
+.gif {
+    width: 150px;
+    margin-right: 10px;
+}
+
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px 0px 10px 0px;
+}
+
+.ai {
+position: relative;
+background-color: #ffffff;
+padding: 10px;
+border-radius: 10px;
+width: 150px;
+height: 80px;
+}
+
+
+.ai::before {
+content: '';
+position: absolute;
+top: 50%;
+left: -15px;
+margin-top: -10px;
+border-width: 10px 15px 10px 0;
+border-color: transparent #ffffff transparent transparent;
+border-style: solid;
+}
+
+.ichiran {
+        display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-right: 40px;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.stamp2 {
+        background-color: #f9f9f9;
+        color: #313131;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 12px;
+}
+
+.stamp2 span {
+margin: 5px;
+}
+
+.img img{
+    width: 200px;
+}
+
+.myid  {
+        display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+          font-size: 15px;
+          margin-top: 10px;
+}
+
+.myidgroup {
+   background-color: rgb(255, 255, 255);
+   padding: 20px;
+}
+
+.iddayo {
+    font-weight: 900;
+    margin-top: -5px;
+    
+}
+
+.followlist {
+        font-weight: 900;
+    font-size: 15px;
+            display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;            
+padding: 10px;
+
+
+}
+
+
+.followlist_group {
+    background-color: rgb(255, 255, 255);
+    padding: 20px;
+    border-top: 1px solid #313131;
+    /* 上の境界線 */
+    border-bottom: 1px solid #313131;
+    /* 下の境界線 */
+}
+
+.tourokugroyp {
+    display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin: 30px 0px 0px 0px;
+        background-color: #ffffff;
+        padding: 30px; 
+}
+
+.group2 {
+padding-bottom: 300px;
+}
+
+.page_title {
+    display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        font-size: 25px;
+        font-weight: 800;
+        margin: 30px;
+}
+
+.touroku_email , .touroku_pass , .touroku_button {
+text-align: center;
+    margin-top: 15px;
+
+}
+
+.touroku_button button {
+
+    margin-bottom: 100px;
+  background-color: #F6BC9A;
+  color: rgb(255, 255, 255);
+  font-size: 15px;
+  margin-bottom: 30px;
+  border: none;
+
+  
+  }
+
+
+.touroku_button button:hover {
+      background-color: #f6bc9a77;
+      ;
+  }
+
+.tourokulink a {
+    color: #313131;
+    font-weight: 600;
+    text-decoration: underline;
+    font-size: 16px;
+        display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 20px 0px -10px 0px;
+}
+
+.tourokulink a:hover {
+    color: #f1945e;
+
+}
+
+.muryoudayo {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #575757;
+
+    padding-bottom: 300px;
+}
+
+.ai_search {
+    position: relative;
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 10px;
+    width: 200px;
+    height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+}
+
+.ai_search::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -15px;
+    /* 下側に配置 */
+    margin-left: -10px;
+    /* 棘の幅の半分の値で調整 */
+    border-width: 15px 10px 0 10px;
+    /* 上向きの矢印を下向きに変更 */
+    border-color: #ffffff transparent transparent transparent;
+    /* 上側の境界線に色を付ける */
+    border-style: solid;
+}
+
+.ai_search_group {
+        display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+}
+
+.tell_list ul {
+list-style-type: none;
+text-align: center;
+background-color: #ffffff;
+padding: 20px;
+}
+
+.tell_list  {
+    display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+margin-bottom: 50px;
+}

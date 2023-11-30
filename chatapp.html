@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>chat</title>
+  <style>
+    #output li {
+      background: #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>つぶやき</h1>
+  <form>
+    <fieldset>
+      <div>
+        名前: <input type="text" id="name">
+      </div>
+  <div>
+    <input type="text" id="text" placeholder="今の気持ちは？">
+  </div>
+      <div>
+        <button type="button" id="send">つぶやく</button>
+      </div>
+    </fieldset>
+  </form>
+
+  <!-- データ出力場所 -->
+  <ul id="output"></ul>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+    // 日時をいい感じの形式にする関数
+    function convertTimestampToDatetime(timestamp) {
+      const _d = timestamp ? new Date(timestamp * 1000) : new Date();
+      const Y = _d.getFullYear();
+      const m = (_d.getMonth() + 1).toString().padStart(2, '0');
+      const d = _d.getDate().toString().padStart(2, '0');
+      const H = _d.getHours().toString().padStart(2, '0');
+      const i = _d.getMinutes().toString().padStart(2, '0');
+      const s = _d.getSeconds().toString().padStart(2, '0');
+      return `${Y}/${m}/${d} ${H}:${i}:${s}`;
+    }
+  </script>
+  <!-- 以下にfirebaseのコードを貼り付けよう -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp,
+      query,
+      orderBy,
+      onSnapshot,
+    } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+  
+      authDomain: "chat-20231125-d8d1f.firebaseapp.com",
+      projectId: "chat-20231125-d8d1f",
+      storageBucket: "chat-20231125-d8d1f.appspot.com",
+      messagingSenderId: "174715849662",
+      appId: "1:174715849662:web:96f589639c5ca2547c47ef"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    const db = getFirestore(app);
+
+    $("#send").on("click", function () {
+
+      const data = {
+        name: $("#name").val(),
+        text: $("#text").val(),
+        time: serverTimestamp(),
+      };
+
+      addDoc(collection(db, "chat"), data);
+      $("#text").val("");
+
+    });
+
+    // データ取得処理
+    const q = query(collection(db, "chat"), orderBy("time", "desc"));
+
+    onSnapshot(q, (querySnapshot) => {
+      // onSnapshot(collection(db, "chat"), (querySnapshot) => {
+      console.log(querySnapshot.docs);
+
+      const documents = [];
+      querySnapshot.docs.forEach(function (doc) {
+        const document = {
+          id: doc.id,
+          data: doc.data(),
+        };
+        documents.push(document);
+      });
+
+      console.log(documents);
+
+
+
+      const htmlElements = [];
+      documents.forEach(function (document) {
+        htmlElements.push(`
+    <li id="${document.id}">
+      <p>${document.data.name
+          } at ${convertTimestampToDatetime(document.data.time.seconds)}</p>
+      <p>${document.data.text}</p>
+    </li>
+  `);
+      });
+
+      $("#output").html(htmlElements);
+
+
+    });
+
+
+    $("#text").on("keydown", function (e) {
+      if (e.keyCode === 13) {
+        const postData = {
+          name: $("#name").val(),
+          text: $("#text").val(),
+          time: serverTimestamp(),
+        };
+        addDoc(collection(db, "chat"), postData);
+        $("#text").val("");
+      }
+    });
+
+
+  </script>
+
+</body>
+
+</html>
