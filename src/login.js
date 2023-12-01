@@ -46,16 +46,16 @@ function Login() {
                     </a>
                 </div>
               
-            </div>
-     
-       <div className="logo">
-       <a href="/">
+      </div>
+      
+      <div className="logo">
+      <a href="/">
         <img src="/img/logo.png" alt="logo" />
         </a>
         </div>
       <form onSubmit={login}>
-         <div className="tourokugroyp">
-                 <div className="touroku_email">
+      <div className="tourokugroyp">
+      <div className="touroku_email">
         <input
           type="email"
           value={email}
@@ -69,9 +69,10 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="パスワード"
             /></div>
-           <div className="touroku_button">
+          <div className="touroku_button">
             <button type="submit">ログイン</button>
           </div>
+          <div className="matawa">または</div>
             <button onClick={loginWithGoogle}>Googleアカウントでログイン</button> {/* Googleログインボタン */}
           </div>
       </form>

@@ -3,14 +3,32 @@ import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, update
 import { db, storage } from './firebaseConfig'; // storageをインポート
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Firebase Storage 関連の関数をインポート
 import axios from 'axios'; // axiosをインポート
-// Firestoreクエリ関連の関数をインポート
 import { getDocs, where } from 'firebase/firestore';
 import { auth } from './firebaseConfig'; 
-
-//友達探し
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
-function StampModal({ isOpen, onClose, messageId, addStamp }) {
+
+function Chat() {
+    const [stampSelectorVisible, setStampSelectorVisible] = useState(false); // スタンプ選択UIの表示状態
+    const [selectedStamps, setSelectedStamps] = useState([]); // 選択されたスタンプのリスト
+    const [currentMessageId, setCurrentMessageId] = useState(null); // 現在選択中のメッセージID
+    const [name, setName] = useState('');
+    const [text, setText] = useState('');
+    const [messages, setMessages] = useState([]);
+    const [selectedStamp, setSelectedStamp] = useState(null); // 選択されたスタンプを保持
+    const [image, setImage] = useState(null);
+  // Talk APIからの応答を保存するためのステート
+    const [apiResponse, setApiResponse] = useState('');
+    const [defaultText, setDefaultText] = useState(''); //ディフォルト文字
+    const [userId, setUserId] = useState(null);
+    const db = getFirestore();
+    const toggleStampSelector = (messageId) => {
+    setCurrentMessageId(messageId);
+    setStampSelectorVisible(!stampSelectorVisible); // スタンプ選択UIの表示状態を切り替える
+};
+    const [followingIds, setFollowingIds] = useState([]); // フォローしているユーザーのIDを管理する状態
+  
+  function StampModal({ isOpen, onClose, messageId, addStamp }) {
   if (!isOpen) return null;
 
   return (
@@ -22,34 +40,13 @@ function StampModal({ isOpen, onClose, messageId, addStamp }) {
         <button onClick={() => addStamp(messageId, 'hakusyu')}>👏</button>
         <button onClick={() => addStamp(messageId, 'ok')}>🆗</button>
         <button onClick={() => addStamp(messageId, 'smile')}>😊</button>
-        <button onClick={onClose}>閉じる</button>
+       <div className="close"><button onClick={onClose}>閉じる</button></div>
       </div>
     </div>
   );
 }
 
-function Chat() {
-    const [stampSelectorVisible, setStampSelectorVisible] = useState(false); // スタンプ選択UIの表示状態
-  const [selectedStamps, setSelectedStamps] = useState([]); // 選択されたスタンプのリスト
-   const [currentMessageId, setCurrentMessageId] = useState(null); // 現在選択中のメッセージID
- const [name, setName] = useState('');
 
-  const [text, setText] = useState('');
-　const [messages, setMessages] = useState([]);
-  const [selectedStamp, setSelectedStamp] = useState(null); // 選択されたスタンプを保持
-const [image, setImage] = useState(null);
-  // Talk APIからの応答を保存するためのステート
-  const [apiResponse, setApiResponse] = useState('');
-  const [defaultText, setDefaultText] = useState(''); //ディフォルト文字
-
-  const [userId, setUserId] = useState(null);
-  const db = getFirestore();
-  const toggleStampSelector = (messageId) => {
-  setCurrentMessageId(messageId);
-  setStampSelectorVisible(!stampSelectorVisible); // スタンプ選択UIの表示状態を切り替える
-};
-   const [followingIds, setFollowingIds] = useState([]); // フォローしているユーザーのIDを管理する状態
-  
   //ログイン時にユーザー名取得
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async user => {
@@ -90,12 +87,10 @@ const [image, setImage] = useState(null);
     localStorage.setItem('name', name);
   }, [name]);
 
-   
   useEffect(() => {
   
   const now = new Date();
   const oneDayAgo = now.getTime() - 24 * 60 * 60 * 1000; // 現在時刻から24時間前
-
   const q = query(collection(db, "chat"), orderBy("time", "desc"));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const newMessages = querySnapshot.docs
@@ -121,7 +116,7 @@ const [image, setImage] = useState(null);
 }, []);
   
   // Googleログイン
- const loginWithGoogle = async () => {
+  const loginWithGoogle = async () => {
   const provider = new GoogleAuthProvider();
   try {
     const result = await signInWithPopup(auth, provider);
@@ -139,13 +134,13 @@ const [image, setImage] = useState(null);
       customId: customId
     });
 
- } catch (error) {
+  } catch (error) {
       console.log(error.message);
     }
   };
 
 // カスタムIDに基づいてユーザーを検索
-const searchUserByCustomId = async (customId) => {
+  const searchUserByCustomId = async (customId) => {
   const querySnapshot = await getDocs(query(collection(db, "users"), where("customId", "==", customId)));
   querySnapshot.forEach((doc) => {
     console.log(doc.id, " => ", doc.data());
@@ -158,7 +153,7 @@ const searchUserByCustomId = async (customId) => {
   const sendToTalkAPI = async (userInput) => {
     let formData = new FormData();
     // データを追加
-    formData.append();
+    formData.append('apikey', 'ZZkdnYKYYylCFyAeoZFPDPzilTUbqFTf');
     formData.append('query', userInput);
       
     const response = await axios.post('https://api.a3rt.recruit.co.jp/talk/v1/smalltalk', formData)
@@ -166,16 +161,13 @@ const searchUserByCustomId = async (customId) => {
         // レスポンスの処理
         console.log(response.data.results[0].reply);
         setApiResponse(response.data.results[0].reply);
-     
   }
 
- 
-
   const defaultResponses = [
-  "会えてうれしいよ",
-  "まってたよ〜",
-  "調子はどう？",
-  "気軽に話してね",
+    "会えてうれしいよ",
+    "まってたよ〜",
+    "調子はどう？",
+    "気軽に話してね",
     "まったりいこう〜",
     "会いに来てくれてありがとう",
 
@@ -186,7 +178,7 @@ const searchUserByCustomId = async (customId) => {
 }, []);
   
   // スタンプ選択UIを表示する関数
-   const renderStampSelector = (messageId) => {
+    const renderStampSelector = (messageId) => {
     return (
       <div>
         <button onClick={() => addStamp(messageId, 'like')}>👍</button>
@@ -211,13 +203,13 @@ const uploadImage = async () => {
 };
   
    // メッセージ送信時にTalk APIにもリクエストを送る
-  const sendMessage = async () => {
+ const sendMessage = async () => {
   if (name && (text || image)) {
     const imageUrl = await uploadImage();
     sendToTalkAPI(text);
     const messageData = {
-      userId: auth.currentUser.uid, // 投稿者のユーザーID
-      name, // ユーザー名を保存
+      userId: auth.currentUser.uid,
+      name,
       text,
       imageUrl,
       time: serverTimestamp(),
@@ -226,8 +218,10 @@ const uploadImage = async () => {
     };
 
     await addDoc(collection(db, "chat"), messageData);
-    // その他のステートをリセット
-     setImage(null);
+
+    // ここでテキストと画像の状態をリセット
+    setText('');
+    setImage(null);
   } else {
     alert("名前とメッセージを入力してください");
   }
@@ -268,14 +262,11 @@ useEffect(() => {
   
   ///スタンプ追加
   const stampTypes = ['like', 'love']; // 新しいスタンプの種類を追加
-
- const addStamp = async (messageId, stampType) =>  {
+  const addStamp = async (messageId, stampType) =>  {
   const messageRef = doc(db, "chat", messageId);
   const messageDoc = await getDoc(messageRef);
   const messageData = messageDoc.data();
-
   const stamps = messageData.stamps || {}; // stamps フィールドが存在しない場合、空のオブジェクトを割り当てる
-
   const newStamps = {
     ...stamps,
     [stampType]: (stamps[stampType] || 0) + 1
@@ -296,7 +287,6 @@ useEffect(() => {
 useEffect(() => {
   const now = new Date();
   const oneDayAgo = now.getTime() - 24 * 60 * 60 * 1000;
-
   const q = query(collection(db, "chat"), orderBy("time", "desc"));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
      const newMessages = querySnapshot.docs
@@ -348,19 +338,19 @@ function convertTimestampToDatetime(timestamp) {
   return (
     <div className="container">
       <div className="heder">
-      <div className="logo2">
-       <a href="/">
+        <div className="logo2">
+        <a href="/">
         <img src="/img/logo.png" alt="logo" />
         </a>
         </div>
       <div className="icon">
-       <a href="/chat">
+        <a href="/chat">
         <img src="/img/chat.png" alt="chat" />
       </a>
-             <a href="/usersearch">
+        <a href="/usersearch">
         <img src="/img/search.png" alt="usersearch" />
       </a>
-             <a href="/tell">
+        <a href="/tell">
         <img src="/img/tell.png" alt="tell" />
         </a>
         </div>
@@ -371,7 +361,7 @@ function convertTimestampToDatetime(timestamp) {
       </div>
       {/* 名前とメッセージ入力フォーム */}
       <div className="nyuuryoku_group">
-       <div className="nyuuryoku">
+        <div className="nyuuryoku">
         <input
         type="text"
         value={name}
@@ -385,12 +375,13 @@ function convertTimestampToDatetime(timestamp) {
       onKeyDown={handleEnter}
       placeholder="つぶやき"
       />
-       {/* 画像を選択するためのインプット */}
+          {/* 画像を選択するためのインプット */}
+          <div className="imgup">
     <input
       type="file"
       accept="image/*"
       onChange={(e) => setImage(e.target.files[0])}
-    />
+    /></div>
         <button className="send" onClick={sendMessage}>送信</button>
         </div>
         </div>
@@ -399,7 +390,8 @@ function convertTimestampToDatetime(timestamp) {
     <ul>
         {messages.map((message) => (
           <li key={message.id} className="message-item">
-            <div className="message-header">{message.data.name}　{message.formattedTime}</div>
+            <div className="message-header">{message.data.name}</div>
+            <div className="formattedTime">{message.formattedTime}</div>
             <div className="message-text">{message.data.text}</div>
             <div className="message-actions">
               {/* ここで画像を表示 */}
@@ -407,7 +399,7 @@ function convertTimestampToDatetime(timestamp) {
     {message.data.imageUrl && <img src={message.data.imageUrl} alt="アップロードされた画像" />}</div>
               {/* お気に入りボタン */}
               <div className="stamp">
-             <button
+            <button
   onClick={() => toggleFavorite(message.id, message.data.isFavorited)}
   className={`favorite-button ${message.data.isFavorited ? 'favorited' : ''}`}
 >
@@ -416,22 +408,22 @@ function convertTimestampToDatetime(timestamp) {
                 {/* スタンプ選択ボタン */}
                 <div className="smile">
                   <button onClick={() => toggleStampSelector(message.id)}>スタンプ</button></div>
-                 </div>
+                </div>
                 {/* スタンプ選択UIの表示 */}
                 {/* {currentMessageId === message.id && renderStampSelector(message.id)} */} 
 
                 {/* スタンプが押されたときのみ表示 */}
                 <div className="stamp2">
-                {message.data.stamps && message.data.stamps.like > 0 && (
+                  {message.data.stamps && message.data.stamps.like > 0 && (
                   <span>👍 {message.data.stamps.like}</span>
-                )}
-                {message.data.stamps && message.data.stamps.love > 0 && (
+                  )}
+                  {message.data.stamps && message.data.stamps.love > 0 && (
                   <span>❤️ {message.data.stamps.love}</span>
                   )}
-                   {message.data.stamps && message.data.stamps.kanashii > 0 && (
+                  {message.data.stamps && message.data.stamps.kanashii > 0 && (
                   <span>😢 {message.data.stamps.kanashii}</span>
                   )}
-                   {message.data.stamps && message.data.stamps.ok > 0 && (
+                  {message.data.stamps && message.data.stamps.ok > 0 && (
                   <span>🆗 {message.data.stamps.ok}</span>
                   )}
                                   {message.data.stamps && message.data.stamps.hakusyu > 0 && (
@@ -448,7 +440,6 @@ function convertTimestampToDatetime(timestamp) {
       messageId={currentMessageId}
       addStamp={addStamp}
     />
-             
             </div>
           </li>
         ))}

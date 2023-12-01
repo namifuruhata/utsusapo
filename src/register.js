@@ -1,22 +1,22 @@
 // register.js
 import React, { useState } from "react";
 import { auth } from './firebaseConfig'; // Firebase設定をインポート
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const register = async (e) => {
-    e.preventDefault();
-    try {
-        await auth.createUserWithEmailAndPassword(email, password);
-      // 登録成功後の処理
-    } catch (error) {
-      // エラー処理
-      console.error("アカウント登録エラー", error);
-    }
-  };
-
+const register = async (e) => {
+  e.preventDefault();
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    // 登録成功後の処理
+  } catch (error) {
+    // エラー処理
+    console.error("アカウント登録エラー", error);
+  }
+};
 
      return (
         <div className="container">
@@ -26,17 +26,6 @@ function Register() {
                         <img src="/img/logo.png" alt="logo" />
                     </a>
                 </div>
-                {/* <div className="icon">
-                    <a href="/chat">
-                        <img src="/img/chat.png" alt="chat" />
-                    </a>
-                    <a href="/usersearch">
-                        <img src="/img/search.png" alt="usersearch" />
-                    </a>
-                    <a href="/tell">
-                        <img src="/img/tell.png" alt="tell" />
-                    </a>
-                </div> */}
          </div>
          
          <div className="page_title">会員登録</div>
