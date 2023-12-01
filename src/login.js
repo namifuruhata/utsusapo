@@ -4,7 +4,7 @@ import { auth } from './firebaseConfig';  // Firebase設定をインポート
 import { Navigate } from "react-router-dom"; // Navigateコンポーネントをインポート
 import { Link, useNavigate } from "react-router-dom"; // useNavigateを追加
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'; // Google認証プロバイダをインポート
-
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 
 function Login() {
@@ -12,18 +12,17 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate(); // useNavigateを使用してリダイレクト用の関数を取得
 
-  const login = async (e) => {
-    e.preventDefault();
-
-    try {
-      await auth.signInWithEmailAndPassword(email, password);
-      // ログイン成功後の処理
-      navigate("/chat"); // ログイン成功時に "/chat" にリダイレクト
-    } catch (error) {
-      // エラー処理
-      console.error("ログインエラー", error);
-    }
-  };
+ const login = async (e) => {
+  e.preventDefault();
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    // ログイン成功後の処理
+    navigate("/chat"); // ログイン成功時に "/chat" にリダイレクト
+  } catch (error) {
+    // エラー処理
+    console.error("ログインエラー", error);
+  }
+};
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();

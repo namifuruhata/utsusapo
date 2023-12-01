@@ -153,7 +153,7 @@ function Chat() {
   const sendToTalkAPI = async (userInput) => {
     let formData = new FormData();
     // データを追加
-    formData.append('apikey', 'ZZkdnYKYYylCFyAeoZFPDPzilTUbqFTf');
+    formData.append('apikey', );
     formData.append('query', userInput);
       
     const response = await axios.post('https://api.a3rt.recruit.co.jp/talk/v1/smalltalk', formData)
