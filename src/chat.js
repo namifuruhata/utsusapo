@@ -27,7 +27,9 @@ function Chat() {
     setStampSelectorVisible(!stampSelectorVisible); // スタンプ選択UIの表示状態を切り替える
 };
     const [followingIds, setFollowingIds] = useState([]); // フォローしているユーザーのIDを管理する状態
-  
+  const [emotionAnalysisResult, setEmotionAnalysisResult] = useState(null);
+
+
   function StampModal({ isOpen, onClose, messageId, addStamp }) {
   if (!isOpen) return null;
 
@@ -45,8 +47,54 @@ function Chat() {
     </div>
   );
 }
+  // 感情分析
+ const apiKey = 'FF64ECF9F822C7E7FC5F75F14D5E4C3C9ADC801D'; // あなたのAPIキーを設定
+const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
+const apiUrl = `http://ap.mextractr.net/ma9/emotion_analyzer?&apikey=${apiKey}&out=json&text=${encodeURIComponent(text)}`;
+  
+  // 感情分析結果をFirebaseに保存する関数
+const saveEmotionAnalysisResult = async (messageId, emotionResult) => {
+  const messageRef = doc(db, "chat", messageId);
+  await updateDoc(messageRef, { emotionAnalysisResult: emotionResult });
+};
+const analyzeEmotion = async (text, messageId) => {
+  try {
+    const response = await fetch(`${corsProxyUrl}${apiUrl}&out=json&text=${encodeURIComponent(text)}`, {
+      method: 'GET',
+      headers: {
+        'Origin': 'http://localhost:3001', 
+      },
+    });
 
+    console.log('エンコードされたテキスト:', encodeURIComponent(text));
+    console.log('textの値:', text);
 
+    if (!response.ok) {
+      throw new Error('APIリクエストに失敗しました');
+    }
+
+    const result = await response.json();
+    console.log(result);
+
+    if (result.analyzed_text) {
+      const emotionResult = {
+        analyzedText: result.analyzed_text,
+        angerFear: result.angerfear,
+        joySad: result.joysad,
+        likeDislike: result.likedislike,
+      };
+
+      console.log('感情分析結果:', emotionResult);
+      setEmotionAnalysisResult(emotionResult); // 結果を状態にセットする
+    } else {
+      console.error('感情分析の結果が含まれていないレスポンス');
+    }
+  } catch (error) {
+    console.error('エラーが発生しました:', error);
+  }
+};
+
+  
   //ログイン時にユーザー名取得
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async user => {
@@ -148,12 +196,13 @@ function Chat() {
 };
   
 
+
   
     // Talk APIにリクエストを送信する関数
   const sendToTalkAPI = async (userInput) => {
     let formData = new FormData();
     // データを追加
-    formData.append('apikey', );
+        formData.append('apikey', 'ZZkdnYKYYylCFyAeoZFPDPzilTUbqFTf');
     formData.append('query', userInput);
       
     const response = await axios.post('https://api.a3rt.recruit.co.jp/talk/v1/smalltalk', formData)
@@ -202,10 +251,14 @@ const uploadImage = async () => {
   return getDownloadURL(uploadResult.ref);
 };
   
-   // メッセージ送信時にTalk APIにもリクエストを送る
+  // メッセージ送信時にTalk APIにもリクエストを送る
  const sendMessage = async () => {
   if (name && (text || image)) {
     const imageUrl = await uploadImage();
+    
+    // メッセージ送信前に感情分析を呼び出す
+    await analyzeEmotion(text);
+    
     sendToTalkAPI(text);
     const messageData = {
       userId: auth.currentUser.uid,
@@ -214,12 +267,11 @@ const uploadImage = async () => {
       imageUrl,
       time: serverTimestamp(),
       isFavorited: false,
-      stamps: selectedStamp ? { [selectedStamp]: 1 } : {}
+      stamps: selectedStamp ? { [selectedStamp]: 1 } : {},
     };
 
     await addDoc(collection(db, "chat"), messageData);
 
-    // ここでテキストと画像の状態をリセット
     setText('');
     setImage(null);
   } else {
@@ -393,7 +445,9 @@ function convertTimestampToDatetime(timestamp) {
             <div className="message-header">{message.data.name}</div>
             <div className="formattedTime">{message.formattedTime}</div>
             <div className="message-text">{message.data.text}</div>
+            
             <div className="message-actions">
+
               {/* ここで画像を表示 */}
               <div className="img">
     {message.data.imageUrl && <img src={message.data.imageUrl} alt="アップロードされた画像" />}</div>
@@ -408,7 +462,19 @@ function convertTimestampToDatetime(timestamp) {
                 {/* スタンプ選択ボタン */}
                 <div className="smile">
                   <button onClick={() => toggleStampSelector(message.id)}>スタンプ</button></div>
-                </div>
+                            {/*感情分析結果の表示*/}
+       <div>
+      <button onClick={() => analyzeEmotion("テキスト")}>感情分析</button>
+      {emotionAnalysisResult && (
+        <div>
+          <p>怒り・恐怖: {emotionAnalysisResult.angerFear}</p>
+          <p>喜び・悲しみ: {emotionAnalysisResult.joySad}</p>
+          <p>好き・嫌い: {emotionAnalysisResult.likeDislike}</p>
+        </div>
+      )}
+    </div>
+              </div>
+              
                 {/* スタンプ選択UIの表示 */}
                 {/* {currentMessageId === message.id && renderStampSelector(message.id)} */} 
 
