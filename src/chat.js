@@ -48,7 +48,7 @@ function Chat() {
   );
 }
   // 感情分析
- const apiKey = 'FF64ECF9F822C7E7FC5F75F14D5E4C3C9ADC801D'; // あなたのAPIキーを設定
+ const apiKey =  // あなたのAPIキーを設定
 const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
 const apiUrl = `http://ap.mextractr.net/ma9/emotion_analyzer?&apikey=${apiKey}&out=json&text=${encodeURIComponent(text)}`;
   
@@ -202,7 +202,7 @@ const analyzeEmotion = async (text, messageId) => {
   const sendToTalkAPI = async (userInput) => {
     let formData = new FormData();
     // データを追加
-        formData.append('apikey', 'ZZkdnYKYYylCFyAeoZFPDPzilTUbqFTf');
+        formData.append('apikey',);
     formData.append('query', userInput);
       
     const response = await axios.post('https://api.a3rt.recruit.co.jp/talk/v1/smalltalk', formData)

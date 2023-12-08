@@ -9,12 +9,12 @@ import { getStorage } from 'firebase/storage';
 
 // Firebaseの設定
     const firebaseConfig = {
-        apiKey: "AIzaSyB76iIRjEjSAFcG73zNDzBypnNCNVwCrpc",
+        apiKey:
       authDomain: "chat-20231125-d8d1f.firebaseapp.com",
       projectId: "chat-20231125-d8d1f",
       storageBucket: "chat-20231125-d8d1f.appspot.com",
       messagingSenderId: "174715849662",
-      appId: "1:174715849662:web:96f589639c5ca2547c47ef"
+      appId: 
     };
 
 // Firebaseを初期化
